@@ -1,0 +1,82 @@
+{% extends "shared/_master.html" %}
+
+{% block page_title %}Purple Stats{% endblock page_title %}
+
+{% block style -%}
+<link rel="stylesheet" href="/static/purple.css">
+<!--[if gte IE 9]>
+  <style type="text/css">
+    .gradient {
+       filter: none;
+    }
+  </style>
+<![endif]-->
+{%- endblock style %}
+
+{% block header -%}
+<h1>{{ session.team }}</h1>
+<ul id="purple-commands" class="clearfix">
+    <li>New Game</li>
+    <li>Games</li>
+    <li>Records</li>
+</ul>
+{%- endblock header %}
+
+{% block content -%}
+<table id="player-grid" class="append">
+    <thead>
+        <tr class="white-gloss gradient">
+            <th scope="col">&nbsp;</th>
+            <th scope="col" id="field-goals">Field Goals</th>
+            <th scope="col" id="3-pointers">3 Pointers</th>
+            <th scope="col" id="free-throws">Free Throws</th>
+            <th scope="col" id="rebounds">Rebounds</th>
+            <th scope="col" id="assists">Assists</th>
+            <th scope="col" id="steals">Steals</th>
+            <th scope="col" id="blocks">Blocks</th>
+            <th scope="col" id="turnovers">Turnovers</th>
+            <th scope="col">Points</th>
+            <th scope="col">Efficiency</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for player in roster -%}
+        <tr id="{{ player.key() }}" class="black-3d">
+            <th scope="row">{{ player.name }}</th>
+            <td class="field-goals split"><a class="fgm attempt">0</a><a class="fga">0</a></td>
+            <td class="3-pointers split"><a class="tgm attempt">0</a><a class="tga">0</a></td>
+            <td class="free-throws split"><a class="ftm attempt">0</a><a class="fta">0</a></td>
+            <td class="rebounds"><a class="reb">0</a></td>
+            <td class="assists"><a class="ast">0</a></td>
+            <td class="steals"><a class="stl">0</a></td>
+            <td class="block"><a class="blk">0</a></td>
+            <td class="turnovers"><a class="to">0</a></td>
+            <td><span class="points">0</span></td>
+            <td><span class="eff">0</span></td>
+        </tr>
+        {%- endfor %}
+        <tr id="add-player" class="black-3d">
+            <th scope="row"><input type="text" /></th>
+            <td class="field-goals split"><a class="fgm attempt">0</a><a class="fga">0</a></td>
+            <td class="3-pointers split"><a class="tgm attempt">0</a><a class="tga">0</a></td>
+            <td class="free-throws split"><a class="ftm attempt">0</a><a class="fta">0</a></td>
+            <td class="rebounds"><a class="reb">0</a></td>
+            <td class="assists"><a class="ast">0</a></td>
+            <td class="steals"><a class="stl">0</a></td>
+            <td class="block"><a class="blk">0</a></td>
+            <td class="turnovers"><a class="to">0</a></td>
+            <td><span class="points">0</span></td>
+            <td><span class="eff">0</span></td>
+        </tr>
+    </tbody>
+</table>
+{%- endblock content %}
+
+{% block script -%}
+<script src="/js/purple.js"></script>
+<script>
+jQuery(function($){
+    $(window).bind('beforeunload', function(){ return ''; });
+});
+</script>
+{%- endblock script %}

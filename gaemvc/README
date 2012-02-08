@@ -1,0 +1,22 @@
+==|== GAEMVC ====
+latest: Feb 5, 2012
+contributors: michael gillette
+Appengine SDK: 1.6
+Python: 2.7
+
+==|== Description ====
+A simple yet powerful framework to map urls to functions and data.
+
+==|== Installation ====
+
+GaeMVC requires the following architecture
+
+./
+... app.yaml
+... main.py
+... views/
+   ... __init__.py
+... controllers.py
+... models.py
+
+Note: controllers and models may also use a subdirectory. remember to include an __init__.py file.

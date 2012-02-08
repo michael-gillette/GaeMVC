@@ -1,0 +1,60 @@
+{% extends "shared/_master.html" %}
+
+{% block page_title -%}Michael Gillette - Informative Letter to Stray Boots Games{%- endblock page_title %}
+
+{% block style -%}
+<link rel="stylesheet" href="/static/vmap.css">
+{%- endblock style %}
+
+{% block header -%}
+<h1>Hi Stray Boots, I'm Michael Gillette</h1>
+<ul id="mg-links" class="bottom-right inline-parent">
+	<li><a href="https://github.com/michael-gillette" target="_blank">Github</a></li>
+	<li><a href="https://docs.google.com/Doc?docid=0Afq8VxsWC4biZGR0endnYjJfM2c2cjdna2c0" target="_blank">Resume</a></li>
+	<li><a href="mailto:me@michaelgillette.net">Email</a></li>
+</ul>
+{%- endblock header %}
+
+{% block content -%}
+<article style="width:100%" class="clearfix">
+	<h2>I build experiences.</h2>
+	<p class="left" style="width:400px">
+		I develop, both front-end and back-end code, with the outlook of programming as an art. Elegant code leads to elegant solutions. I began my studies of User Experience at Auctiva. Learning the ins and outs of a language, its best-practices, allows a product to provide top of the line service to customers. I believe the front-end of an app should bear the soul of a product, and communicate effectively with or without so many words what the product or feature does. I know that simple is better than feature creep. Steve Krug's book title says it all "Don't Make Me Think". I say that goes hand in hand with KISS; Keep It Simple Stupid. Two philosophies I take very much to heart in all my code.
+	</p>
+	<img src="/images/me.jpg" align="right" width="400px" />
+</article>
+
+<div class="left">
+	<article>
+		<h2>Why am I good choice for you?</h2>
+		<p>
+			I developed on e-commerce websites before. I worked on the Elefy team at Auctiva, a B2C e-commerce application serving data from thousands of Auctiva Commerce stores. I have good experience with Python web development. I have developed on Django, Google Appengine, and a home rolled MVC framework (specific to appengine). I love to build applications and modules to existing applications, and I love an environment where I can work with like minded people. Its this reason I am excited to apply for your site. I believe in the mission of your product, to move people from the couches to the streets. One of the reasons I enjoyed my previous home in Chico, is the communal enjoyment of the outdoors and how there was always so much more to do outside than in.
+		</p>
+	</article>
+	
+	<article>
+		<h2>The other side of the computer</h2>
+		<p>
+			I live in Westlake Village, California. I didn't always live down here. For the past 4 years I lived in Chico, NorCal. While up there I blossomed as a developer. I also blossomed as a young adult. I am 21 years old. Find me a trail and I want to bike it. Find me a swimming hole and I want to dive into it. I play soccer and football, and join in pick up games whenever possible. You'll usually find me on the bike or in a book when I'm not developing.
+		</p>
+	</article>
+</div>
+
+<div class="right">
+	<article>
+		<h2>I love to learn</h2>
+		<p>
+			When I started in web programming around 12 years old, I began with the idea of building a forum. Some initial research prompted me to pick up PHP and MySQL. From a simple idea I took off. Its a strong language with untold numbers of supporters, quick and simple to utilize with some powerful features. My first 2 contracts and the first in-office position I held advanced my knowledge of PHP, and my ability to look inward and correct my code for production use. Once I began at Auctiva, I had to transition from a interpreted language mindset to compiled language one.
+		</p><p>
+			I started off on small pieces of ASP.NET C# (MVC too) in conjunction with my usual front-end duties. Eventually I became quite fluent, occasionally dipping my toe in the TSQL pool. Not often of course, the DBA lifeguards were very helpful whenever I required a certain query. When I moved to Qbillion, another startup, the environment shifted once again.
+		</p><p>
+			Qbillion hosted itself on Google AppEngine using the Python runtime. Similar to PHP in some respects, I picked up this one quickly. I eventually transitioned the entire site from Django to a custom framework I wrote, GAEMVC, (viewable on Github) due to slow speed and massive overhead. 
+		</p>
+	</article>
+</div>
+
+{%- endblock content %}
+
+{% block footer -%}
+    {%- include "shared/_contact.html" -%}
+{%- endblock footer %}
