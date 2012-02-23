@@ -6,7 +6,16 @@ from google.appengine.api import users
 # from application
 import views
 
-jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader( os.path.dirname(views.__file__) ))
+jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader( os.path.dirname(views.__file__) ), trim_blocks=True, line_statement_prefix="#", line_comment_prefix="##")
+
+def setup_environment():
+    global jinja_environment
+    import bfunctions as templatetags
+    fns = [fn for fn in dir(templatetags) if "__" not in fn]
+    for fn in fns:
+        jinja_environment.filters[fn] = getattr(templatetags,fn)
+
+#setup_environment()
 
 def View(admin_only=False,routes=[]):
     def view_wrap(fn):
@@ -35,11 +44,13 @@ def View(admin_only=False,routes=[]):
             except Exception,ex:
                 view_data     = fn(self)
             
-            view_data.update({"page":self.request.path})
             view_data.update({"request":self.request})
             view_data.update({"version":os.environ["CURRENT_VERSION_ID"]})
             view_data.update({"development_environment":os.environ['SERVER_SOFTWARE'].startswith('Dev')})
             view_data.update({"session":self.session})
+            
+            # apply custom master page if assigned
+            view_data.update({ "page_theme":self.Theme or "shared/_master.html" })
             
             _template    = self.Template if self.Template else fn.__name__ + '.html'
             tmpl_path = "%(area)s/%(file)s" % {"area":self.Area,"file":_template}

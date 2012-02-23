@@ -5,6 +5,7 @@ from gaemvc.methods import View
 class BaseController( object ):
     Area      = "shared"
     Template  = None
+    Theme     = None
     AdminOnly = False
     ViewState = {}
     
@@ -20,8 +21,8 @@ class BaseController( object ):
         return self.handler.response
     
     @webapp2.cached_property
-    def session(this):
-        return this.handler.session_store.get_session()
+    def session(self):
+        return self.handler.session_store.get_session()
 
 class Switchboard( webapp2.RequestHandler ):
     VIEW       = 1
@@ -32,16 +33,25 @@ class Switchboard( webapp2.RequestHandler ):
         super(Switchboard, self).__init__(*args, **kwargs)
         self.sites = BaseController.__subclasses__()
     def get(self, tail=""):
+        import logging
         line = tail.split('/')
+        
+        # check against default controller
+        if hasattr(self.default, line[0]):
+            return self.response.out.write( getattr(self.default, line[0])(self.default(self)) )            
+            
+        
+        # view does not belong to default controller
         for subclass in self.sites:
             if subclass.Area == line[self.CONTROLLER]:
                 ctrl = subclass(self)
                 if hasattr(subclass,line[self.VIEW]):
                     _View = getattr(subclass,line[self.VIEW])
-                    self.response.out.write( _View( ctrl ) )
-                else:
-                    self.response.out.write( ctrl.index() )
-                return
+                    return self.response.out.write( _View( ctrl ) )
+                
+                return self.response.out.write( ctrl.index() )
+        
+        # no dice: respond with index
         self.response.out.write( self.default(self).index() )
     def post(self, tail=""):
         self.get(tail)

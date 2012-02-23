@@ -11,6 +11,9 @@
     }
   </style>
 <![endif]-->
+<script>
+var players = [ {% for player in roster %}['{{ player.name }}', '{{ player.key() }}'],{% endfor %} ];
+</script>
 {%- endblock style %}
 
 {% block header -%}
@@ -26,7 +29,7 @@
 <table id="player-grid" class="append">
     <thead>
         <tr class="white-gloss gradient">
-            <th scope="col">&nbsp;</th>
+            <th scope="col"><a id="change">change</a></th>
             <th scope="col" id="field-goals">Field Goals</th>
             <th scope="col" id="3-pointers">3 Pointers</th>
             <th scope="col" id="free-throws">Free Throws</th>
@@ -40,21 +43,6 @@
         </tr>
     </thead>
     <tbody>
-        {% for player in roster -%}
-        <tr id="{{ player.key() }}" class="black-3d">
-            <th scope="row">{{ player.name }}</th>
-            <td class="field-goals split"><a class="fgm attempt">0</a><a class="fga">0</a></td>
-            <td class="3-pointers split"><a class="tgm attempt">0</a><a class="tga">0</a></td>
-            <td class="free-throws split"><a class="ftm attempt">0</a><a class="fta">0</a></td>
-            <td class="rebounds"><a class="reb">0</a></td>
-            <td class="assists"><a class="ast">0</a></td>
-            <td class="steals"><a class="stl">0</a></td>
-            <td class="block"><a class="blk">0</a></td>
-            <td class="turnovers"><a class="to">0</a></td>
-            <td><span class="points">0</span></td>
-            <td><span class="eff">0</span></td>
-        </tr>
-        {%- endfor %}
         <tr id="add-player" class="black-3d">
             <th scope="row"><input type="text" /></th>
             <td class="field-goals split"><a class="fgm attempt">0</a><a class="fga">0</a></td>

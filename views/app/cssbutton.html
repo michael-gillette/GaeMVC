@@ -1,0 +1,29 @@
+{% extends "shared/_master.html" -%}
+
+{% block page_title %}CSS3 Button Generator{% endblock page_title %}
+
+{% block style -%}
+<link rel="stylesheet" href="/static/apps.css" />
+<link rel="stylesheet" href="/js/colorpicker/colorpicker.css" />
+{%- endblock style %}
+
+{% block content -%}
+<fieldset id="generated">
+    <legend>Preview</legend>
+    <input value="0" class="radii" id="top-left" style="top:0;left:0;margin-top:7px;" />
+    <input value="0" class="radii" id="top-right" style="top:0;right:0;margin-top:7px;" />
+    <input value="0" class="radii" id="bottom-right" style="bottom:0;right:0;" />
+    <input value="0" class="radii" id="bottom-left" style="bottom:0;left:0;" />
+    <div id="button">
+        <a>Click Me</a>
+    </div>
+</fieldset>
+<div id="generator">
+    
+</div>
+{%- endblock content %}
+
+{% block script -%}
+<script src="/js/colorpicker/colorpicker.js"></script>
+<script src="/js/generator.js"></script>
+{%- endblock script %}
