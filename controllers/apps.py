@@ -8,6 +8,10 @@ from gaemvc.handler import BaseController
 class AppsController( BaseController ):
     Area = "app"
     
+    @View()
+    def craigslist(self, **kwargs):
+        return {}
+    
     ## Css3 Button generator View + Action
     @View()
     def cssbutton(self, **kwargs):

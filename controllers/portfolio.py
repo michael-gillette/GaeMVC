@@ -12,3 +12,7 @@ class CoverLetterController( BaseController ):
     @View()
     def strayboots(self, **kwargs):
         return {}
+    
+    @View()
+    def trefis(self, **kwargs):
+        return {}
