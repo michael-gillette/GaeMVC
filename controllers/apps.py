@@ -8,6 +8,11 @@ from gaemvc.handler import BaseController
 class AppsController( BaseController ):
     Area = "app"
     
+    ## EEE application
+    @View()
+    def eee(self, **kwargs):
+        return {}
+    
     @View()
     def craigslist(self, **kwargs):
         return {}
