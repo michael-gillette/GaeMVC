@@ -47,7 +47,7 @@ function stat_adjustment(e) {
     // skip if attempts go below points
     var prev = $t.prev('a.attempt').get();
     var pval = !!prev.length ? parseInt(prev[0].innerHTML) : false;
-    if ( (!!pval && pval == original) || (original + (1 * modifier)) < 0) { return }
+    if ( (!!pval && pval == original && modifier < 0) || (original + (1 * modifier)) < 0) { return }
     // make changes to value
     var value    = original + (1 * modifier);
     this.innerHTML = value;
