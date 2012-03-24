@@ -1,15 +1,18 @@
 # from application
-from gaemvc.methods import View, Action
-from gaemvc.handler import BaseController
+from gaemvc.methods import controller
 # from application.controllers
-from controllers.portfolio import *
-from controllers.purple import *
-from controllers.apps import *
+from controllers.purple import purple
+from controllers.apps import smallapp
 
-class HomeController( BaseController ):
-    Area = "home"
-    
-    @Action(redirect="/coverletter/")
-    def index(self, **kwargs):
-        self.Template = "portfolio.html"
-        return {}
+home = controller("home")
+
+@home.view(redirect_to="/coverletter/")
+def index(handler):
+	return {}
+
+@home.view()
+def coverletter(handler):
+    return {}
+
+apps = [home, smallapp, purple]
+default_app = home

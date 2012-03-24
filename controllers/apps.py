@@ -2,21 +2,18 @@
 from webapp2_extras import json
 from google.appengine.ext import db
 # from application
-from gaemvc.methods import View, Action
-from gaemvc.handler import BaseController
+from gaemvc.methods import controller
 
-class AppsController( BaseController ):
-    Area = "app"
-    
-    @View()
-    def craigslist(self, **kwargs):
-        return {}
-    
-    ## Css3 Button generator View + Action
-    @View()
-    def cssbutton(self, **kwargs):
-        return {}
-    
-    @Action(responseType="json")
-    def generatecssbutton(self, **kwargs):
-        return {}
+smallapp = controller("app")
+
+@smallapp.view()
+def index(handler): return {}
+
+@smallapp.view()
+def craigslist(handler): return {}
+
+@smallapp.view()
+def cssbutton(handler): return {}
+
+@smallapp.view(response_type="json")
+def generatecssbutton(handler): return {}

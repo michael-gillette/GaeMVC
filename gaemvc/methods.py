@@ -8,83 +8,62 @@ import views
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader( os.path.dirname(views.__file__) ), trim_blocks=True, line_statement_prefix="#", line_comment_prefix="##")
 
-def setup_environment():
-    global jinja_environment
-    import bfunctions as templatetags
-    fns = [fn for fn in dir(templatetags) if "__" not in fn]
-    for fn in fns:
-        jinja_environment.filters[fn] = getattr(templatetags,fn)
-
-#setup_environment()
-
-def View(admin_only=False,routes=[]):
-    def view_wrap(fn):
-        def tmpl(self):
-            if admin_only or self.AdminOnly:
-                user = users.get_current_user()
-                if not user:
-                    self.handler.redirect(users.create_login_url(this.request.uri))
-                elif not users.is_current_user_admin():
-                    self.handler.redirect('/%s/' % self.Area)
-            # if routes defined, assign them to the controller
-            if routes:
-                self.route = {}
-                for route in routes:
-                    if re.search(route,self.request.path):
-                        self.route = re.search(route,self.request.path).groupdict()
-            gets   = self.request
-            kwargs = {}
-            args   = gets.arguments()
-            # create a CGI dictionary
-            [kwargs.update({str(k):gets.get(k)}) for k in args]
-            
-            view_data = {}
-            try:
-                view_data     = fn(self,**kwargs)
-            except Exception,ex:
-                view_data     = fn(self)
-            
-            view_data.update({"request":self.request})
-            view_data.update({"version":os.environ["CURRENT_VERSION_ID"]})
-            view_data.update({"development_environment":os.environ['SERVER_SOFTWARE'].startswith('Dev')})
-            view_data.update({"session":self.session})
-            
-            # apply custom master page if assigned
-            view_data.update({ "page_theme":self.Theme or "shared/_master.html" })
-            
-            _template    = self.Template if self.Template else fn.__name__ + '.html'
-            tmpl_path = "%(area)s/%(file)s" % {"area":self.Area,"file":_template}
-            
-            compiled = jinja_environment.get_template(tmpl_path)
-            
-            return compiled.render( view_data )
-        tmpl.__name__ = fn.__name__
-        return tmpl
-    return view_wrap
-
-def Action(redirect=None,responseType="text",area=None,tmpl=None):
-    def action_wrap(fn):
-        def action(self):
-            gets = self.request
-            kwargs = {}
-            args   = gets.arguments()
-            Area = area if area else self.Area
-            # create a CGI dictionary
-            [kwargs.update({str(k):gets.get(k)}) for k in args]
-            
-            view_data = fn(self,**kwargs)
-            if not redirect: #return values
-                if responseType == "json":
-                    self.response.headers["Content-Type"] = "application/json"
-                    return json.encode( view_data )
-                elif responseType == "template" and tmpl is not None:
-                    view_data.update({"Routes":self.routes})
-                    TemplatePath = "%(area)s/%(file)s.html" % {"area":Area,"file":tmpl}
-                    compiled     = jinja_environment.get_template(TemplatePath)
-                    return compiled.render( view_data )
-                return view_data
-            else: #redirect
-                self.handler.redirect(redirect)
-        action.__name__ = fn.__name__
-        return action
-    return action_wrap
+def controller(area, pagetheme=None, adminonly=False):
+    handlers = {}
+    
+    def container(): pass
+    
+    def http_decorator(routes=[], response_type="html", redirect_to=None, template=None, folder=None, admin_only=False):
+        def http_handler(fn):
+            def handler(gae_handler):
+                # prepare
+                request  = gae_handler.request
+                response = gae_handler.response
+                route = {}
+                params   = dict(gae_handler.request.params)
+                
+                if adminonly or admin_only:
+                    user = users.get_current_user()
+                    if not user:
+                        url = users.create_login_url(request.uri)
+                    elif not users.is_current_user_admin():
+                        url = '/%s/' % area
+                    gae_handler.redirect(url)
+                
+                if routes:
+                    for r in routes:
+                        if re.search(r, request.path):
+                            route = re.search(r, request.path).groupdict()
+                
+                try:
+                    context = fn(gae_handler, params, route)
+                except TypeError as te:
+                    context = fn(gae_handler)
+                
+                if redirect_to:
+                    return gae_handler.redirect(redirect_to)
+                
+                tmpl_name = template or fn.__name__ + ".html"
+                tmpl_path = "%s/%s" % (folder or area,tmpl_name)
+                tmpl_file = jinja_environment.get_template(tmpl_path)
+                
+                if response_type == "html":
+                    context.update({
+                        'request'     : request,
+                        'app_version' : os.environ["CURRENT_VERSION_ID"],
+                        'is_dev_env'  : os.environ["SERVER_SOFTWARE"].startswith("Dev"),
+                        'session'     : gae_handler.session,
+                        'page_theme'  : pagetheme or "shared/_master.html",
+                    })
+                    return tmpl_file.render( context )
+                elif response_type == "json":
+                    response.headers["Content-Type"] = "application/json"
+                    return json.encode( context )
+            handler.__name__ = fn.__name__
+            handlers[fn.__name__] = handler
+            return fn
+        return http_handler
+    container.all  = handlers
+    container.area = area
+    container.view = http_decorator
+    return container
