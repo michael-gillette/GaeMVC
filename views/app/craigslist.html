@@ -1,0 +1,116 @@
+{% extends page_theme %}
+
+{% block page_title %}Craigslist Scraper{% endblock page_title %}
+
+{% block style %}
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css" rel="stylesheet">
+{% endblock style %}
+
+{% block header %}
+<h1>Craigslist Scraper</h1>
+{% endblock header %}
+
+{% block content %}
+    <div class="ui-widget">
+        <input type="text" id="search" title="http://chico.craigslist.org" value="chico" />
+        &nbsp;&nbsp;&nbsp;
+        <select id="category">
+            <option value="jjj" default>All Jobs</option>
+            <option value="acc">accounting/finance</option>
+            <option value="ofc">admin/office</option>
+            <option value="egr">arch/engineering</option>
+            <option value="med">art/media/design</option>
+            <option value="sci">biotech/science</option>
+            <option value="bud">business/mgmt</option>
+            <option value="csr">customer service</option>
+            <option value="edu">education</option>
+            <option value="fbh">food/bev/hosp</option>
+            <option value="lab">general labor</option>
+            <option value="gov">government</option>
+            <option value="hum">human resources</option>
+            <option value="eng">internet engineers</option>
+            <option value="lgl">legal/paralegal</option>
+            <option value="mnu">manufactoring</option>
+            <option value="mar">marketing/pr/ad</option>
+            <option value="hea">medical/health</option>
+            <option value="npo">nonprofit sector</option>
+            <option value="rej">real estate</option>
+            <option value="ret">retail/wholesale</option>
+            <option value="sls">sales/biz dev</option>
+            <option value="spa">salon/spa/fitness</option>
+            <option value="sec">security</option>
+            <option value="trd">skilled trade/craft</option>
+            <option value="sof">software/qa/dba</option>
+            <option value="sad">systems/network</option>
+            <option value="tch">technical support</option>
+            <option value="trp">transport</option>
+            <option value="tfr">tv/film/video</option>
+            <option value="web">web/info design</option>
+            <option value="wri">writing/editing</option>
+            <option value="etc">[ETC]</option>
+            <option value="foo">bar</option>
+        </select>
+        &nbsp;&nbsp;&nbsp;
+        <label for="telecommute">Telecommute</label>
+        <input type="checkbox" id="telecommute" />
+        &nbsp;&nbsp;&nbsp;
+        <button id="query">Find Jobs</button>
+    </div>
+    <ul id="results">
+    
+    </ul>
+{% endblock content %}
+
+{% block footer %}
+&copy; 2012 Michael Gillette. All Rights Reserved. Listings courtesy <a href="http://www.craigslist.org/about/" target="_blank">Craigslist</a>. This application uses the <a href="http://developer.yahoo.com/yql/">Yahoo Query Language</a> to scrape data.
+{% endblock footer %}
+
+{% block script %}
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+<script defer src="/js/cities.js"></script>
+<script>
+jQuery(function($){
+    var $search = $('#search');
+    var $category = $('#category');
+    var $results = $('#results');
+    var $tele    = $('#telecommute');
+    
+    $search.trigger('focus').autocomplete({
+        source : cities,
+        focus  : function(evt, ui) {
+            $search.val( ui.item.label );
+            $search.attr( 'title', ui.item.value );
+            return false;
+        },
+        select : function(evt, ui) {
+            $search.val( ui.item.label );
+            $search.attr( 'title', ui.item.value );
+            return false;
+        }
+    });
+    
+    $('#query').bind('click', function(evt) {
+        var base = $search.attr('title');
+        var cat  = $category.val();
+        //var url  = base + '/' + cat + '/'
+        var url  = base + '/search/' + cat + '?query=%2B%26srchType=A'
+        if ($tele.is(':checked')) { url += '%26addOne=telecommuting'; }
+        var query = "select * from html where url='" + url    + "' and xpath='//blockquote/p/a'";
+        var yql  = "http://query.yahooapis.com/v1/public/yql?q=" + query + "&format=json&diagnostics=true&callback=?";
+        
+        $.getJSON(yql,{},function(d){
+            var listings = d.query.results;
+            if (!!listings) {
+                var links = $.map(listings.a,function(el,idx,undefined){
+                    return "<li><a href='"+el.href+"' target='_blank'>"+el.content+"</a></li>";
+                });
+                $results.html(links.join(''));
+            } else {
+                $results.html("<h3>There are no results for this job in this area. Try another!</h3>")
+            }
+        });
+        
+    });
+});
+</script>
+{% endblock script %}
