@@ -20,3 +20,9 @@ GaeMVC requires the following architecture
 ... models.py
 
 Note: controllers and models may also use a subdirectory. remember to include an __init__.py file.
+
+ctrl = controller(area, [pagetheme=None, adminonly=False])
+
+@ctrl.view([routes=[], response_type="html", redirect_to=None, template=None, folder=None, admin_only=False])
+def page(handler, [params, route]):
+    return {}

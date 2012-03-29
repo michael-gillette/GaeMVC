@@ -5,10 +5,10 @@ from gaemvc.methods import controller
 shared = controller("shared")
 
 @shared.view()
-def index(request, response): return {}
+def index(handler): return {}
 
 @shared.view()
-def http404(request, response): return {}
+def http404(handler): return {}
 
 class Switchboard( webapp2.RequestHandler ):
     controllers = []
@@ -16,6 +16,7 @@ class Switchboard( webapp2.RequestHandler ):
     
     def __init__(self,*args,**kwargs):
         super(Switchboard, self).__init__(*args, **kwargs)
+        self.default = self.default or shared
     
     def get(self, tail=""):
         line = tail.split('/')
