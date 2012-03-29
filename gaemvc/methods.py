@@ -51,7 +51,7 @@ def controller(area, pagetheme=None, adminonly=False):
                 except TypeError as te:
                     context = fn(gae_handler)
                 
-                tmpl     = template if template else context.get("__template",None)
+                tmpl     = template or context.get("__template",None)
                 redirect = redirect_to or context.get("__redirect_to",None)
                 
                 if redirect:
