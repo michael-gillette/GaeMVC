@@ -15,5 +15,5 @@ def craigslist(handler): return {}
 @smallapp.view()
 def cssbutton(handler): return {}
 
-@smallapp.view(response_type="json")
+@smallapp.json()
 def generatecssbutton(handler): return {}

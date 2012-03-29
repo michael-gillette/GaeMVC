@@ -24,17 +24,17 @@ def load_team(handler, team_name):
 purple = controller("purple")
 
 @purple.view()
-def index(handler, **kwargs):
+def index(handler, route, params):
     team = load_team(handler, "Purple Penetrators")
     return { "roster" : team.roster }
 
 @purple.view(routes=[r"/(?P<team>[A-Za-z0-9-_]+)/$"])
-def team(handler, params, route):
+def team(handler, route, params):
     team_name = route.get("team","").replace("-"," ")
     team      =  load_team(handler, team_name)
     return { 'roster' : team.roster, '__template' : 'index.html' }
 
-@purple.view(response_type="json")
+@purple.json()
 def cleanup(handler, **kwargs):
     from models.stats import Game
     
@@ -45,8 +45,8 @@ def cleanup(handler, **kwargs):
     
     return {}
 
-@purple.view(response_type="json")
-def save_record(handler, params, **kwargs):
+@purple.json()
+def save_record(handler, route, params):
     from models.stats import Player, Record
     
     player   = params.get("player", "")
@@ -61,8 +61,8 @@ def save_record(handler, params, **kwargs):
     
     return { "success" : False }
     
-@purple.view(response_type="json")
-def add_player(handler, params, **kwargs):
+@purple.json()
+def add_player(handler, route, params):
     from google.appengine.ext import db
     from models.stats import Team, Player
     
