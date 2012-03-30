@@ -1,0 +1,67 @@
+{% extends "shared/_master.html" %}
+
+{% block page_title %}Writer {% endblock page_title %}
+
+{% block content %}
+{% if session.account %}
+<div id="home-base">
+    {% for draft in drafts %}
+    <article>
+        <h1>{{ draft.title }}</h1>
+        <a href="/writer/draft/{{ draft.key().name() }}/">edit</a>
+        <a href="/writer/article/{{ draft.key().name() }}/">view</a>
+    </article>
+    {% endfor %}
+</div>
+{% else %}
+<form id="form" class="clearfix" method="POST" action="/writer/load_account/">
+    <dl class="left-half">
+        <dt>nickname</dt>
+        <dd><input type="text" id="nickname" name="nickname" /></dd>
+        <dt>password</dt>
+        <dd><input type="password" id="password" name="password" /></dd>
+        <dt>confirm</dt>
+        <dd><input type="password" id="confirm" disabled /></dd>
+        <dt></dt>
+        <dd><button id="submit">login</button><a href="javascript:void(0)" class="small">forgot password</a></dd>
+    </dl>
+    <div class="right-half">
+        <h3>Write Clean</h3>
+        <p>Word processing applications provide solutions to life situations a writer rarely encounters. I wanted something that provides the only solution a writer needs. The ability to edit and then publish.</p>
+    </div>
+</form>
+{% endif %}
+{% endblock content %}
+
+{% block style %}
+<style>
+.small { font-size:smaller }
+.left-half { float:left;width:240px; }
+.right-half { float:right;width:240px; }
+#form { width:500px;margin:30px auto 0;padding:5px 10px;border:1px solid #ccc; }
+    #form .small { padding:0 0 0 10px; }
+    #form dd { margin:0; }
+
+#home-base { width:960px;margin:0 auto; }
+</style>
+{% endblock style %}
+
+{% block script %}
+<script>
+var $form = $('#form'),
+    $home = $('#home-base');
+
+function check_username(e) {
+    $.getJSON('/writer/doesuserexist/', { 'nickname': $form.find('#nickname').val() }, function(d){
+        $form.find('#confirm').attr('disabled',d.exists);
+        $form.find('button').html(d.exists ? "login" : "create")
+        $form.attr('action',d.exists ? "/writer/load_account/" : "/writer/new_account/")
+    });
+}
+
+jQuery(function($){
+    $form.find('#nickname').bind('blur',check_username);
+});
+
+</script>
+{% endblock %}

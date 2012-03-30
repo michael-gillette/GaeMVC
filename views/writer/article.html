@@ -1,0 +1,18 @@
+{% extends "shared/_master.html" %}
+
+{% block page_title %}{{ article.title }} - {{ article._author.name() }}{% endblock %}
+
+{% block content %}
+<div id="article">
+{{ article.html }}
+</div>
+{% endblock content %}
+
+{% block style %}
+<style>
+html { overflow-y: auto; }
+html, body { background:#ccc;height:100%; }
+#container { width:960px;margin:0 auto;height:100%;background:#fff;overflow:auto; }
+#article { margin:20px 10px;font-size:14px;line-height:25px; }
+</style>
+{% endblock style %}

@@ -1,0 +1,96 @@
+{% extends "shared/_master.html" %}
+
+{% block page_title %}Edit Document{% endblock %}
+
+{% block header %}
+<div class="ribbon">
+    <h1>{{ draft.title }}</h1>
+    <a href="javascript:void(0)" id="edit">edit</a>
+    <input type="text" id="title" value="{{ draft.title }}" maxlength="75"/>
+    <div id="save-data">
+        <a href="/writer/">go back</a>
+        <button id="save">save</button>
+        <div id="autosaved">last saved at <span>{{ draft.isodate }}</span></div>
+    </div>
+</div>
+{% endblock header %}
+
+{% block content %}
+<textarea class="editable large-white">{{ draft.content }}</textarea>
+{% endblock content %}
+
+{% block footer %}
+<div class="statistics">
+<span id="characters"></span>
+<span id="words"></span>
+</div>
+{% endblock footer %}
+
+{% block style %}
+<style>
+html { overflow-y:auto; }
+html, body { background:#7893AD; }
+#container { width:960px;margin:0 auto; }
+.ribbon { margin:0 0 25px;background:#E54D2E;padding:5px;overflow-x:hidden;position:relative;  }
+    .ribbon h1 { margin:0;display:inline; }
+    .ribbon input { display:none;font-size:16px;height:26px;line-height:25px; }
+    .ribbon #save-data { position:absolute;bottom:1px;right:5px;text-align:right; }
+    .ribbon button { background:#576B9C;color:#fff;border:none;1px solid #ccc;font-size:16px; }
+.large-white { border:1px solid #efefef;background:#fff;overflow:auto;width:948px;
+                 box-shadow: 5px 5px 2px #2D2A52;
+            -moz-box-shadow: 5px 5px 2px #2D2A52;
+         -webkit-box-shadow: 5px 5px 2px #2D2A52; }
+.editable { padding:10px 5px;font-size:16px;height:800px;outline:none;font-family:monospace; }
+</style>
+{% endblock style %}
+
+{% block script %}
+<script>
+var $ribbon = $('.ribbon'),
+    $content= $('.editable'),
+    $time   = $('#autosaved span'),
+    key     = '{% if draft.key %}{{ draft.key().name() }}{% endif %}';
+function save(e) {
+    var title = $ribbon.find('input').val(),
+        content = $content.val();
+    $.post('/writer/autosave/', { 'title': title, 'content': content, 'key': key }, function(d){
+        if (!!d.saved) {
+            key = d.saved;
+            $time.html(d.time)
+        }
+    },'json');
+}
+
+function on_enter(fn) {
+    return function(e) {
+        return e.which == 13 ? fn.call(this,e) : true;
+    }
+}
+
+$ribbon.find('a').bind('click',function(e){
+    $ribbon.find('h1,a').hide().end().find('input').show().focus();
+});
+
+$ribbon.find('input')
+        .bind('blur',function(e){
+            $ribbon.find('h1').html(this.value);
+            $(this).hide().siblings().show();
+            save();
+        })
+        .bind('keypress',on_enter(function(e){
+            $(this).blur();
+        })).end()
+       .find('button')
+        .bind('click',save);
+
+$(document).bind('click', function(e){
+    if (e.target.className == "editable large-white") { return }
+    $ribbon.fadeTo('slow', 1);
+});
+
+$content.bind('focus',function(e){
+    $ribbon.fadeTo('slow', 0.4);
+});
+
+</script>
+{% endblock script %}

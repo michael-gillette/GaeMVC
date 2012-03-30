@@ -1,4 +1,5 @@
 import hashlib
+from google.appengine.ext import db
 
 class HashProperty( db.Property ):
     data_type = str
